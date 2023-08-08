@@ -3,11 +3,18 @@ let menor = ""
 let cantidadDeMenores = 0
 let cantidadDePasajeros = 0
 let destino = ""
+let opcionDestino = [
+    { nombre: "buenos aires", precio: 30000}, 
+    { nombre: "mendoza", precio: 40000 },
+    { nombre: "ushuaia", precio: 70000},
+    { nombre: "salta", precio: 55000},
+    { nombre: "misiones", precio: 25000}
+
+];
 
 pasajeros();
 function pasajeros() {
     cantidadDePasajeros = parseInt(prompt("Ingrese el número de pasajeros"));
-    console.log(cantidadDePasajeros);
     if (cantidadDePasajeros < 1) {
         alert("La cantidad de pasajeros no puede ser negativa o 0!");
         pasajeros();
@@ -51,23 +58,23 @@ function armarPaquete() {
     destino = prompt("Ingrese su destino por favor").toLowerCase()
     switch (destino) {
         case "buenos aires":
-            casoDestino(30000)
+            casoDestino()
             break;
 
         case "mendoza":
-            casoDestino(40000)
+            casoDestino()
             break;
 
         case "ushuaia":
-            casoDestino(70000)
+            casoDestino()
             break;
 
         case "salta":
-            casoDestino(55000)
+            casoDestino()
             break;
 
         case "misiones":
-            casoDestino(25000)
+            casoDestino()
             break;
 
         default:
@@ -77,13 +84,15 @@ function armarPaquete() {
 
     }
 }
-function casoDestino(precioIndividual) {
-    if (menor == "no") {
-        alert(`Usted a seleccionado ${destino} como destino, con un precio final de: $${precioIndividual * cantidadDePasajeros}`);
+function casoDestino() {
+    let resultadoDestino = opcionDestino.find((destinoElegido) => destino == destinoElegido.nombre);
+    if (resultadoDestino == destino) {
+        alert(`Usted a seleccionado ${destino} como destino, con un precio final de: $${resultadoDestino.precio * cantidadDePasajeros}`);
+        console.log(resultadoDestino.precio);
     } else {
-        let precioFinal = precioIndividual * cantidadDePasajeros
+        let precioFinal = resultadoDestino.precio * cantidadDePasajeros
         for (let i = 1; i <= cantidadDeMenores; i++) {
-            precioFinal -= precioIndividual
+            precioFinal -= resultadoDestino.precio
         }
         alert(`Usted a seleccionado ${destino} como destino, con un precio final de: $${precioFinal}`);
 
