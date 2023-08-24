@@ -43,9 +43,8 @@ function selectedCard(id, nombre, precio) {
 }
 
 function removeCard(id) {
-    let idDestino = JSON.parse(localStorage.getItem("destino"));
-    let idDestinoObtenido = idDestino.id;
-    if (id == idDestinoObtenido) {
+    let idDestino = JSON.parse(localStorage.getItem("destino")).id;
+    if (id == idDestino) {
         ticketContainer.innerHTML = `<div> </div>`
         localStorage.clear("destino");
     } 
