@@ -1,104 +1,110 @@
-// // alert("Bienvenido a Mandarina Airlines 🍊, su aerolinea favorita para viajes DENTRO de Argentina: \n-Buenos Aires\n-Mendoza\n-Ushuaia\n-Salta\n-Misiones");
-let menor = ""
-let destino = ""
+let minor = ""
+let destination = ""
 let cardSection = document.querySelector(".cardSection");
 let ticketContainer = document.querySelector(".ticketContainer");
 let form = document.querySelector(".form");
 let add = document.querySelector(".add");
 let finalPrice = document.querySelector(".finalPrice");
-let cantidadDePasajeros = document.getElementById("pasajeros");
-let cantidadDeMenores = document.getElementById("menores");
-let price = 0;
+let totalPassengers = document.getElementById("passengers");
+let totalMinors = document.getElementById("minors");
+let globalPrice = 0;
+let themeSwitch = document.querySelector(".darkMode");
+let body = document.querySelector("body");
+let locationName = document.querySelector(".locationName");
+let submitLocation = document.querySelector(".submitLocation");
+let actualWeather = document.querySelector(".actualWeather");
 
-let opcionDestino = [
-    { id: 1, nombre: "buenos aires", precio: 30000 },
-    { id: 2, nombre: "mendoza", precio: 40000 },
-    { id: 3, nombre: "ushuaia", precio: 70000 },
-    { id: 4, nombre: "salta", precio: 55000 },
-    { id: 5, nombre: "misiones", precio: 25000 },
-    { id: 6, nombre: "santa cruz", precio: 10000 }
+let destinationChoice = [
+    { id: 1, name: "buenos aires", price: 30000 },
+    { id: 2, name: "mendoza", price: 40000 },
+    { id: 3, name: "ushuaia", price: 70000 },
+    { id: 4, name: "salta", price: 55000 },
+    { id: 5, name: "misiones", price: 25000 },
+    { id: 6, name: "santa cruz", price: 10000 },
 ];
 
 document.addEventListener("DOMContentLoaded", () => {
-    agregarDestinos();
-    cantidadDePasajeros.value = localStorage.getItem("pasajeros");
-    cantidadDeMenores.value = localStorage.getItem("menores");
-    price = JSON.parse(localStorage.getItem("destino")).precio || 0
-    let destino = JSON.parse(localStorage.getItem("destino"))
-    destino && selectedCard(destino.id, destino.nombre, destino.precio)
+    addDestination();
+    totalPassengers.value = localStorage.getItem("passengers");
+    totalMinors.value = localStorage.getItem("minors");
+    globalPrice = JSON.parse(localStorage.getItem("destination"))?.price || 0
+    totalPrice();
+    let destino = JSON.parse(localStorage.getItem("destination"))
+    destino && selectedCard(destino.id, destino.name, destino.price);
 });
 
-function agregarDestinos() {
-    opcionDestino.forEach((destino) => {
+function addDestination() {
+    destinationChoice.forEach((destino) => {
         cardSection.innerHTML += writeCard(destino)
     }
     )
 }
 
-function selectedCard(id, nombre, precio) {
-    ticketContainer.innerHTML = writeCard({ id, nombre, precio });
-    price = precio
+function selectedCard(id, name, price) {
+    ticketContainer.innerHTML = writeCard({ id, name, price });
+    globalPrice = price
     totalPrice();
-    localStorage.setItem("destino", JSON.stringify({ id, nombre, precio }))
+    localStorage.setItem("destination", JSON.stringify({ id, name, price }))
 }
 
 function removeCard(id) {
-    let idDestino = JSON.parse(localStorage.getItem("destino")).id;
-    if (id == idDestino) {
+    let idDestination = JSON.parse(localStorage.getItem("destination")).id;
+    if (id == idDestination) {
         ticketContainer.innerHTML = `<div> </div>`
-        localStorage.clear("destino");
-    } 
+        localStorage.removeItem("destination");
+        globalPrice = 0;
+        totalPrice();
+    }
 }
 
-function writeCard({ id, nombre, precio }) {
+function writeCard({ id, name, price }) {
     return `
     <div class="card">
     <div class="cardIcon">
     <i class="fas fa-plane"></i> 
     </div>
-      <h3 class="cardTitle">${nombre.charAt(0).toUpperCase() + nombre.slice(1)}</h3>
-      <p class="cardDescription">Precio por boleto: $${precio}</p>
+      <h3 class="cardTitle">${name.charAt(0).toUpperCase() + name.slice(1)}</h3>
+      <p class="cardDescription">Precio por boleto: $${price}</p>
       <div class="buttonContainer">
-      <button class="add" onclick="selectedCard(${id}, '${nombre}', ${precio})">+</button>
+      <button class="add" onclick="selectedCard(${id}, '${name}', ${price})">+</button>
       <button class="remove" onclick="removeCard(${id})">-</button>
       </div>
       </div>`
 }
 
-cantidadDePasajeros.addEventListener("input", () => {
-    validateInputs(cantidadDePasajeros, cantidadDePasajeros.value > 0);
+totalPassengers.addEventListener("input", () => {
+    validateInputs(totalPassengers, totalPassengers.value > 0);
     totalPrice();
-    localStorage.setItem("pasajeros", cantidadDePasajeros.value);
+    localStorage.setItem("passengers", totalPassengers.value);
 })
 
-cantidadDeMenores.addEventListener("input", () => {
-    validateInputs(cantidadDeMenores, cantidadDeMenores.value >= 0);
+totalMinors.addEventListener("input", () => {
+    validateInputs(totalMinors, totalMinors.value >= 0);
     totalPrice();
-    localStorage.setItem("menores", cantidadDeMenores.value);
+    localStorage.setItem("minors", totalMinors.value);
 })
 
 function totalPrice() {
-    let precioFinal = price * cantidadDePasajeros.value
-    for (let i = 1; i <= cantidadDeMenores.value; i++) {
-        precioFinal -= price
+    let finalPriceText = globalPrice * totalPassengers.value
+    for (let i = 1; i <= totalMinors.value; i++) {
+        finalPriceText -= globalPrice
     }
-    finalPrice.textContent =
-        ` El precio final es: $${precioFinal} `
+    finalPrice.innerHTML =
+        ` El precio final es: $${finalPriceText}`
 }
 
-function validateInputs(cantidadDeX, validation) {
-    if (validation && cantidadDeMenores.value < cantidadDePasajeros.value) {
-        cantidadDeX.classList.remove("error");
+function validateInputs(totalX, validation) {
+    if (validation && totalMinors.value < totalPassengers.value) {
+        totalX.classList.remove("error");
     } else {
-        cantidadDeX.classList.add("error");
+        totalX.classList.add("error");
     }
 }
 
 document.querySelector(".submitForm").addEventListener("click", confirmFly)
 
 function confirmFly() {
-    if (cantidadDeMenores.value && cantidadDePasajeros.value && price != 0 && cantidadDeMenores.value < cantidadDePasajeros.value){
-        console.log(price);
+    if (totalMinors.value && totalPassengers.value && globalPrice != 0 && totalMinors.value < totalPassengers.value) {
         Swal.fire(
             'Bien hecho!',
             'Usted ha confirmado su vuelo! 🛫',
@@ -113,11 +119,42 @@ function confirmFly() {
             title: 'Torre de control...?',
             text: 'Tenemos un problema!',
             footer: '<a href="" stlyes="font-weight: 600">Debe completar los datos.</a>'
-          }).then(() => {
-            localStorage.clear();
-          })
+        }).then(() => {
+        })
     }
 }
 
 
+// Dark mode code 
 
+themeSwitch.addEventListener("click", () => {
+    body.classList.toggle("dark-mode")
+})
+
+
+// Reques API
+
+submitLocation.addEventListener("click", (e) => {
+    e.preventDefault();
+    getWeatherLocation("Argentina " + locationName.value);
+})
+
+function getWeatherLocation(location) {
+    console.log(location);
+    fetch(`http://api.weatherapi.com/v1/current.json?key=86aa92a0f3124c9b98d192820230409&q=${location}&aqi=no&lang=es`)
+    .then(res => res.json())
+    .then(data => {
+        writeWeather(data);
+        console.log(data);
+    })
+}
+
+function writeWeather(data) {
+    actualWeather.innerHTML = `
+    <img src="${data.current.condition.icon}" alt="icono clima">
+    <p>${data.location.region}</p>
+    <p>${data.current.condition.text}</p>
+    <p>Temperatura: ${data.current.temp_c}°</p>
+    <small>Sensación térmica: ${data.current.feelslike_c}°</small>
+    `
+}
