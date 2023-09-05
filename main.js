@@ -140,12 +140,10 @@ submitLocation.addEventListener("click", (e) => {
 })
 
 function getWeatherLocation(location) {
-    console.log(location);
     fetch(`https://api.weatherapi.com/v1/current.json?key=86aa92a0f3124c9b98d192820230409&q=${location}&aqi=no&lang=es`)
     .then(res => res.json())
     .then(data => {
         writeWeather(data);
-        console.log(data);
     })
 }
 
